@@ -1,10 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Role } from '../roles/roles.entity';
 
 @Entity({ name: 'users' })
 export class User {
   @ApiProperty({example: '1', description: 'Уникальный идентификатор'})
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;
 
   @ApiProperty({example: 'user@mail.ru', description: 'Почтовый адрес'})
@@ -22,5 +29,9 @@ export class User {
   @ApiProperty({example: 'За нарушение правил', description: 'Причина блокировки'})
   @Column({ type: 'varchar', nullable: true })
   banReason: string | null;
+
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable({ name: 'user_roles' })
+  roles: Role[];
 }
 
